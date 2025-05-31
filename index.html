@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PDF to Editable Converter</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded shadow-md w-full max-w-md text-center">
+    <h1 class="text-2xl font-bold mb-4">Convert Your PDF to Editable Format</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" name="pdf" accept="application/pdf" class="mb-4 w-full" required>
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Upload PDF</button>
+    </form>
+    <div id="status" class="mt-4 text-sm text-gray-700"></div>
+    <a id="downloadLink" href="#" class="hidden mt-4 inline-block text-blue-500 underline">Download Editable File</a>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const status = document.getElementById('status');
+    const downloadLink = document.getElementById('downloadLink');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      status.textContent = 'Uploading and converting...';
+
+      const response = await fetch('/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        status.textContent = 'Conversion complete!';
+        downloadLink.href = result.download_url;
+        downloadLink.classList.remove('hidden');
+      } else {
+        status.textContent = 'Something went wrong.';
+      }
+    });
+  </script>
+</body>
+</html>
